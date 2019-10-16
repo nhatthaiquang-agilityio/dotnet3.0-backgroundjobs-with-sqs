@@ -1,4 +1,5 @@
 using Amazon.SQS;
+using Amazon.SimpleNotificationService;
 using dotnet_backgroundjobs.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using dotnet_backgroundjobs.Aws;
 
 namespace dotnet_backgroundjobs
 {
@@ -35,7 +36,11 @@ namespace dotnet_backgroundjobs
             services.AddHangfireServer();
 
             services.AddAWSService<IAmazonSQS>();
+            services.AddAWSService<IAmazonSimpleNotificationService>();
             services.AddSingleton<SqsMessage>();
+            services.AddSingleton<SnsMessage>();
+
+            // Queuer Reader for Background Service
             services.AddHostedService<QueueReaderService>();
             services.AddHostedService<RecurringJobsService>();
         }
@@ -59,6 +64,7 @@ namespace dotnet_backgroundjobs
                 endpoints.MapControllers();
             });
 
+            // hangfire server and dashboard
             app.UseHangfireServer();
             app.UseHangfireDashboard();
         }

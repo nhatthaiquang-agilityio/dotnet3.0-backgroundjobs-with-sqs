@@ -6,7 +6,7 @@ using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 
-namespace dotnet_backgroundjobs
+namespace dotnet_backgroundjobs.Aws
 {
     public class SqsMessage
     {
@@ -87,26 +87,6 @@ namespace dotnet_backgroundjobs
 
                 if (receiveMessageResponse.Messages.Any())
                 { 
-                    //Console.WriteLine("Printing received message.\n");
-                    //foreach (Message message in receiveMessageResponse.Messages)
-                    //{
-                    //    Console.WriteLine("  Message");
-                    //    Console.WriteLine("    MessageId: {0}", message.MessageId);
-                    //    Console.WriteLine("    ReceiptHandle: {0}", message.ReceiptHandle);
-                    //    Console.WriteLine("    MD5OfBody: {0}", message.MD5OfBody);
-                    //    Console.WriteLine("    Body: {0}", message.Body);
-
-                    //    foreach (KeyValuePair<string, string> entry in message.Attributes)
-                    //    {
-                    //        Console.WriteLine("  Attribute");
-                    //        Console.WriteLine("    Name: {0}", entry.Key);
-                    //        Console.WriteLine("    Value: {0}", entry.Value);
-                    //    }
-                    //}
-                    //String messageRecieptHandle = receiveMessageResponse.Messages[0].ReceiptHandle;
-
-                    //Console.WriteLine("Message handle:");
-                    //Console.WriteLine(messageRecieptHandle);
                     return receiveMessageResponse.Messages;
                 }
                 return null;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Amazon.SQS;
+using dotnet_backgroundjobs.Aws;
 using Hangfire;
 using Hangfire.Annotations;
 using Hangfire.Server;
@@ -36,29 +36,6 @@ namespace dotnet_backgroundjobs.Tasks
 
                 //_recurringJobs.AddOrUpdate("seconds", () => Console.WriteLine("Hello, seconds!"), "*/15 * * * * *");
                 _recurringJobs.AddOrUpdate("minutely", () => Console.WriteLine("Hello, world!"), Cron.Minutely);
-
-                while (!stoppingToken.IsCancellationRequested) // keep reading while the app is running.
-                {
-
-                    Console.WriteLine("Reading SQS");
-                    try
-                    {
-                        var messages = await _sqsMessage.ReceiveSQSMessage();
-                        if (messages != null)
-                        {
-                            foreach (var message in messages)
-                            {
-                                BackgroundJob.Enqueue<TasksService>(
-                                    x => x.RunProcessMessages(message.Body));
-                                await _sqsMessage.DeleteSQSMessage(message.ReceiptHandle);
-                            }
-                        }
-                    }
-                    catch (AmazonSQSException ex)
-                    {
-                        _logger.LogError(ex.Message);
-                    }
-                }
             }
             catch (Exception e)
             {
