@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - 6379:6379
+    environment:
+      REDIS_REPLICATION_MODE: master
+      REDIS_PASSWORD: masterpassword123
+
+  db:
+    image: postgres:11
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: webapp
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: Your_password123
+
+  webapi:
+    container_name: webapi
+    build:
+      context: ../dotnet-backgroundjobs
+    restart: always
+    ports:
+      - 5000:80
+    environment:
+      ConnectionString: Host=db;Database=webapp;Username=postgres_user;Password=Your_password123
+      Redis: redis:6379
+    depends_on:
+      - db
+      - redis
