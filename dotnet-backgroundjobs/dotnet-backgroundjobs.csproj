@@ -17,8 +17,10 @@
     <PackageReference Include="AWSSDK.Core" Version="3.3.103.48" />
     <PackageReference Include="AWSSDK.SQS" Version="3.3.102.16" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.100.1" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.73" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tasks\" />
+    <Folder Include="Aws\" />
   </ItemGroup>
 </Project>
