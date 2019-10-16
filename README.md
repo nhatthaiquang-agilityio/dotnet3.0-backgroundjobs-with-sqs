@@ -9,7 +9,7 @@ Read messages from Amazon SQS and then run Background Job
 + Hangfire for running Jobs
 
 ### Overview
-+ ![Overview](./images/workflow.png)
++ ![Overview](./images/Workflow.png)
 
 ### Reference
 + [SQS Sample](https://github.com/awslabs/aws-sdk-net-samples/blob/master/ConsoleSamples/AmazonSQS_Sample/AmazonSQS_Sample/Program.cs)
