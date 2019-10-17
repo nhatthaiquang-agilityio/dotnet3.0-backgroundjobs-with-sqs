@@ -18,9 +18,17 @@
     <PackageReference Include="AWSSDK.SQS" Version="3.3.102.16" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.100.1" />
     <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.3.101.73" />
+    <PackageReference Include="Amazon.AspNetCore.Identity.Cognito" Version="1.0.2" />
+    <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="1.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tasks\" />
     <Folder Include="Aws\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Controllers\WeatherForecastController.cs" />
+    <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 </Project>
