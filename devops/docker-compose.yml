@@ -30,6 +30,11 @@ services:
     environment:
       ConnectionString: Host=db;Database=webapp;Username=postgres_user;Password=Your_password123
       Redis: redis:6379
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
+      AWS_DEFAULT_REGION: ap-southeast-1
+      AWS_COGNITO_CLIENT_ID:
+      AWS_COGNITO_POOL_ID:
     depends_on:
       - db
       - redis

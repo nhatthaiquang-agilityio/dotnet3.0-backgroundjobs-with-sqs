@@ -12,23 +12,27 @@
 + Redis(Using Hangfire)
 
 
-### Requirement
+### Requirements
 + Add AWS Key Environments into docker-compose file
 + Create a Queue(MyQueue1) in SQS
 + Create a Topic(MyTopic) in SNS
++ Create a AWS Cognito
 
 ### Issue
 + Need to add Aws access Key and Aws Secret Key in SnsMessage file.
 
-### Note
+
+### Notes
 + AWS Congito:
     - Using OpenId: Error: The system doesn't understand the request
         - Need to create a domain name in AWS Cognito
     - Using JWT Bearer:
-        - Add app.UseAuthentication(); berfore app.UseAuthorization(); in startup.cs file
+        - Add `app.UseAuthentication();` berfore `app.UseAuthorization();` in startup.cs file
+
 
 ### Overview
 + ![Overview](./images/Workflow.png)
+
 
 ### Reference
 + [SQS Sample](https://github.com/awslabs/aws-sdk-net-samples/blob/master/ConsoleSamples/AmazonSQS_Sample/AmazonSQS_Sample/Program.cs)

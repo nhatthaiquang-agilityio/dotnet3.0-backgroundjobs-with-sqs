@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace dotnet_backgroundjobs.Controllers
 {
@@ -10,8 +10,19 @@ namespace dotnet_backgroundjobs.Controllers
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
-        private const string _clientId = "<Client ID>";
-        private readonly RegionEndpoint _region = RegionEndpoint.APSoutheast1;
+        private readonly string _clientId;
+        private readonly string _poolId;
+        private readonly AmazonCognitoIdentityProviderClient _cognito;
+
+        public AuthenticationController(IConfiguration configuration)
+        {
+            _cognito = new AmazonCognitoIdentityProviderClient(
+               configuration.GetValue<string>("AWS_ACCESS_KEY_ID"),
+               configuration.GetValue<string>("AWS_SECRET_ACCESS_KEY"),
+               configuration.GetValue<string>("AWS_DEFAULT_REGION"));
+            _clientId = configuration.GetValue<string>("AWS_COGNITO_CLIENT_ID");
+            _poolId = configuration.GetValue<string>("AWS_COGNITO_POOL_ID");
+        }
 
         public class User
         {
@@ -24,9 +35,6 @@ namespace dotnet_backgroundjobs.Controllers
         [Route("register")]
         public async Task<ActionResult<string>> Register(User user)
         {
-            var cognito = new AmazonCognitoIdentityProviderClient(
-               "<AWS Access Key>", "<AWS Secret Key>", _region);
-
             var request = new SignUpRequest
             {
                 ClientId = _clientId,
@@ -41,7 +49,7 @@ namespace dotnet_backgroundjobs.Controllers
             };
             request.UserAttributes.Add(emailAttribute);
 
-            await cognito.SignUpAsync(request);
+            await _cognito.SignUpAsync(request);
 
             return Ok();
         }
@@ -50,12 +58,9 @@ namespace dotnet_backgroundjobs.Controllers
         [Route("signin")]
         public async Task<ActionResult<string>> SignIn(User user)
         {
-            var cognito = new AmazonCognitoIdentityProviderClient(
-                "<AWS Access Key>", "<AWS Secret Key>", _region);
-
             var request = new AdminInitiateAuthRequest
             {
-                UserPoolId = "<Pool ID>",
+                UserPoolId = _poolId,
                 ClientId = _clientId,
                 AuthFlow = AuthFlowType.ADMIN_NO_SRP_AUTH
             };
@@ -63,7 +68,7 @@ namespace dotnet_backgroundjobs.Controllers
             request.AuthParameters.Add("USERNAME", user.Username);
             request.AuthParameters.Add("PASSWORD", user.Password);
 
-            var response = await cognito.AdminInitiateAuthAsync(request);
+            var response = await _cognito.AdminInitiateAuthAsync(request);
 
             return Ok(response.AuthenticationResult.IdToken);
         }

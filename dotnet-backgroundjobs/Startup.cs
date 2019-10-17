@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Amazon.CognitoIdentityProvider;
 
 namespace dotnet_backgroundjobs
 {
@@ -48,6 +49,11 @@ namespace dotnet_backgroundjobs
             services.AddHostedService<QueueReaderService>();
             services.AddHostedService<RecurringJobsService>();
 
+            string clientId = Configuration.GetValue<string>("AWS_COGNITO_CLIENT_ID");
+            string poolId = Configuration.GetValue<string>("AWS_COGNITO_POOL_ID");
+            string region = Configuration.GetValue<string>("AWS_DEFAULT_REGION");
+            string address = "https://cognito-idp."+ region +".amazonaws.com/"+ poolId +
+                "/.well-known/openid-configuration";
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -59,8 +65,8 @@ namespace dotnet_backgroundjobs
             {
                 options.RequireHttpsMetadata = false;
                 options.ResponseType = Configuration["Authentication:Cognito:ResponseType"];
-                options.MetadataAddress = Configuration["Authentication:Cognito:MetadataAddress"];
-                options.ClientId = Configuration["Authentication:Cognito:ClientId"];
+                options.MetadataAddress = address;
+                options.ClientId = clientId;
             });
             //services.AddAuthentication(options =>
             //{
