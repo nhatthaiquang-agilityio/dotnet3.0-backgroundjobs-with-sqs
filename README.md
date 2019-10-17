@@ -1,12 +1,24 @@
-# DotNet Background Jobs And Amazon SQS
-Read messages from Amazon SQS and then run Background Job
+# DotNet Background Jobs And Amazon SQS & SNS
+- Read messages from Amazon SQS and then run Background Job
+- Amazon SNS: Publish message to Email
 
 ## Prerequisite
 + Asp Net Core 3.0
 + Entity Framework
 + Docker & Docker Compose
 + Amazon SQS
++ Amazon SNS
 + Hangfire for running Jobs
++ Redis(Using Hangfire)
+
+
+### Requirement
++ Add AWS Key Environments into docker-compose file
++ Create a Queue(MyQueue1) in SQS
++ Create a Topic(MyTopic) in SNS
+
+### Issue
++ Need to add Aws access Key and Aws Secret Key in SnsMessage file.
 
 ### Overview
 + ![Overview](./images/Workflow.png)

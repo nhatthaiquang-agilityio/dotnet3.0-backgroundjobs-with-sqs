@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using dotnet_backgroundjobs.Aws;
 using Hangfire;
 using Hangfire.Annotations;
 using Hangfire.Server;
@@ -14,16 +13,13 @@ namespace dotnet_backgroundjobs.Tasks
     {
         private readonly IRecurringJobManager _recurringJobs;
         private readonly ILogger<RecurringJobScheduler> _logger;
-        private readonly SqsMessage _sqsMessage;
 
         public RecurringJobsService(
             [NotNull] IRecurringJobManager recurringJobs,
-            [NotNull] ILogger<RecurringJobScheduler> logger,
-            SqsMessage sqsMessage)
+            [NotNull] ILogger<RecurringJobScheduler> logger)
         {
             _recurringJobs = recurringJobs ?? throw new ArgumentNullException(nameof(recurringJobs));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _sqsMessage = sqsMessage;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)

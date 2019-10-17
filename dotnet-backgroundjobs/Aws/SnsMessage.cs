@@ -15,11 +15,8 @@ namespace dotnet_backgroundjobs.Aws
 
         public SnsMessage()
         {
-            //TODO: need to add aws key 
             _sns = new AmazonSimpleNotificationServiceClient(
-                awsAccessKeyId: "",
-                awsSecretAccessKey: "",
-                region: Amazon.RegionEndpoint.APSoutheast1);
+                Amazon.RegionEndpoint.APSoutheast1);
         }
 
         public async Task<string> CreateTopic(string topicName)
