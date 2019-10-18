@@ -1,17 +1,24 @@
 using Amazon.SQS;
 using Amazon.SimpleNotificationService;
 using dotnet_backgroundjobs.Aws;
+using dotnet_backgroundjobs.Data;
+using dotnet_backgroundjobs.Enties;
+using dotnet_backgroundjobs.Email;
+using dotnet_backgroundjobs.Models;
 using dotnet_backgroundjobs.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Amazon.CognitoIdentityProvider;
+using Microsoft.EntityFrameworkCore;
+
+using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace dotnet_backgroundjobs
 {
@@ -52,7 +59,7 @@ namespace dotnet_backgroundjobs
             string clientId = Configuration.GetValue<string>("AWS_COGNITO_CLIENT_ID");
             string poolId = Configuration.GetValue<string>("AWS_COGNITO_POOL_ID");
             string region = Configuration.GetValue<string>("AWS_DEFAULT_REGION");
-            string address = "https://cognito-idp."+ region +".amazonaws.com/"+ poolId +
+            string address = "https://cognito-idp." + region + ".amazonaws.com/" + poolId +
                 "/.well-known/openid-configuration";
             services.AddAuthentication(options =>
             {
@@ -80,6 +87,21 @@ namespace dotnet_backgroundjobs
             //    options.Authority = Configuration["Authentication:Cognito:Authority"];
             //    options.RequireHttpsMetadata = false;
             //});
+
+            // Add framework services.
+            services.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(
+                options => options.UseNpgsql(Configuration["ConnectionString"])
+            );
+            var dataProtectionProviderType = typeof(DataProtectorTokenProvider<ApplicationUser>);
+            var emailTokenProviderType = typeof(EmailTokenProvider<ApplicationUser>);
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddTransient<IEmailService, EmailService>();
+
+            InitData(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -109,5 +131,23 @@ namespace dotnet_backgroundjobs
 
         }
 
+        // Seed Data
+        private void InitData(IServiceCollection services)
+        {
+            ServiceProvider sp = services.BuildServiceProvider();
+            var context = sp.GetRequiredService<ApplicationDbContext>();
+
+            try
+            {
+                context.Database.Migrate();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: Migration Database");
+                Console.WriteLine(e);
+            }
+
+            new ApplicationContextSeed().SeedAsync(context).Wait();
+        }
     }
 }
