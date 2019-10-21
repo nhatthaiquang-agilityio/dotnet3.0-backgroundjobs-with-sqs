@@ -60,26 +60,26 @@ namespace dotnet_backgroundjobs
             string poolId = Configuration.GetValue<string>("AWS_COGNITO_POOL_ID");
             string region = Configuration.GetValue<string>("AWS_DEFAULT_REGION");
             string address = "https://cognito-idp." + region + ".amazonaws.com/" + poolId +
-                "/.well-known/openid-configuration";
+               "/.well-known/openid-configuration";
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+               options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+               options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+               options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
             .AddCookie()
             .AddOpenIdConnect(options =>
             {
-                options.RequireHttpsMetadata = false;
-                options.ResponseType = Configuration["Authentication:Cognito:ResponseType"];
-                options.MetadataAddress = address;
-                options.ClientId = clientId;
+               options.RequireHttpsMetadata = false;
+               options.ResponseType = Configuration["Authentication:Cognito:ResponseType"];
+               options.MetadataAddress = address;
+               options.ClientId = clientId;
             });
+
             //services.AddAuthentication(options =>
             //{
             //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
             //})
             //.AddJwtBearer(options =>
             //{
@@ -92,8 +92,6 @@ namespace dotnet_backgroundjobs
             services.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(
                 options => options.UseNpgsql(Configuration["ConnectionString"])
             );
-            var dataProtectionProviderType = typeof(DataProtectorTokenProvider<ApplicationUser>);
-            var emailTokenProviderType = typeof(EmailTokenProvider<ApplicationUser>);
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
