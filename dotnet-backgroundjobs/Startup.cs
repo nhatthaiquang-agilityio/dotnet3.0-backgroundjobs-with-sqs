@@ -9,6 +9,7 @@ using dotnet_backgroundjobs.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 //using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -16,9 +17,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-
 using System;
-using Microsoft.AspNetCore.Identity;
+
 
 namespace dotnet_backgroundjobs
 {
@@ -46,35 +46,35 @@ namespace dotnet_backgroundjobs
             });
             services.AddHangfireServer();
 
-            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-            services.AddAWSService<IAmazonSQS>();
-            services.AddAWSService<IAmazonSimpleNotificationService>();
-            services.AddSingleton<SqsMessage>();
-            services.AddSingleton<SnsMessage>();
+            // services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            // services.AddAWSService<IAmazonSQS>();
+            // services.AddAWSService<IAmazonSimpleNotificationService>();
+            // services.AddSingleton<SqsMessage>();
+            // services.AddSingleton<SnsMessage>();
 
-            // Queuer Reader for Background Service
-            services.AddHostedService<QueueReaderService>();
-            services.AddHostedService<RecurringJobsService>();
+            // Queue Reader for Background Service
+            // services.AddHostedService<QueueReaderService>();
+            // services.AddHostedService<RecurringJobsService>();
 
-            string clientId = Configuration.GetValue<string>("AWS_COGNITO_CLIENT_ID");
-            string poolId = Configuration.GetValue<string>("AWS_COGNITO_POOL_ID");
-            string region = Configuration.GetValue<string>("AWS_DEFAULT_REGION");
-            string address = "https://cognito-idp." + region + ".amazonaws.com/" + poolId +
-               "/.well-known/openid-configuration";
-            services.AddAuthentication(options =>
-            {
-               options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-               options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-               options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-            .AddCookie()
-            .AddOpenIdConnect(options =>
-            {
-               options.RequireHttpsMetadata = false;
-               options.ResponseType = Configuration["Authentication:Cognito:ResponseType"];
-               options.MetadataAddress = address;
-               options.ClientId = clientId;
-            });
+            // string clientId = Configuration.GetValue<string>("AWS_COGNITO_CLIENT_ID", "");
+            // string poolId = Configuration.GetValue<string>("AWS_COGNITO_POOL_ID", "");
+            // string region = Configuration.GetValue<string>("AWS_DEFAULT_REGION", "ap-southeast-1");
+            // string address = "https://cognito-idp." + region + ".amazonaws.com/" + poolId +
+            //    "/.well-known/openid-configuration";
+            // services.AddAuthentication(options =>
+            // {
+            //     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            // })
+            // .AddCookie()
+            // .AddOpenIdConnect(options =>
+            // {
+            //     options.RequireHttpsMetadata = false;
+            //     options.ResponseType = Configuration["Authentication:Cognito:ResponseType"];
+            //     options.MetadataAddress = address;
+            //     options.ClientId = clientId;
+            // });
 
             //services.AddAuthentication(options =>
             //{
@@ -96,8 +96,8 @@ namespace dotnet_backgroundjobs
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-            services.AddTransient<IEmailService, EmailService>();
+            // services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            // services.AddTransient<IEmailService, EmailService>();
 
             InitData(services);
         }
